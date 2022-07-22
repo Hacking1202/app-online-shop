@@ -1,0 +1,49 @@
+ HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!/src/main/
+!/src/test/
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+**.log
+*.gz
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+'.idea'
+'.log'
+'*.mvn'
+app-online-shop/.mvn
+app-online-shop/mvnw
+app-online-shop/mvnw.cmd
+app-online-shop/target
+app-online-shop/web
+app-online-shop/app-online-shop.iml
+app-shop-front/node_modules/
+app-shop-front/node_modules/**
+node_modules/**
+node_modules/
+node_modules/**.idea
+spring_app_log_file.log
+node_modules/**.idea.log
+spring_app_log_file.log
