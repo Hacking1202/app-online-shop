@@ -21,6 +21,8 @@ public class Product extends AbsEntity {
     private String expireAmount;
     @Column(nullable = false)
     private String timeMode;
+    @OneToOne
+    private Measure measure;
     @Column(nullable = false)
     private String percentProfit;
 

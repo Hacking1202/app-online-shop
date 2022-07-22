@@ -5,6 +5,7 @@ import com.example.apponlineshop.payload.ReqProduct;
 import com.example.apponlineshop.payload.ResProduct;
 import com.example.apponlineshop.repository.CategoryRepository;
 import com.example.apponlineshop.repository.MakerRepository;
+import com.example.apponlineshop.repository.MeasurerRepository;
 import com.example.apponlineshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -24,7 +25,7 @@ public class ProductService {
     @Autowired
     MakerRepository makerRepository;
     @Autowired
-    MeasureRepository measureRepository;
+    MeasurerRepository measureRepository;
     public ApiResponse saveProduct(ReqProduct reqProduct) {
         Product product = new Product();
         product.setName(reqProduct.getName());
