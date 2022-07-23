@@ -4,6 +4,7 @@ import com.example.apponlineshop.entity.template.AbsEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,6 +24,8 @@ public class Product extends AbsEntity {
     private String timeMode;
     @OneToOne
     private Measure measure;
+    @OneToMany
+    private List<Detail> detail;
     @Column(nullable = false)
     private String percentProfit;
 

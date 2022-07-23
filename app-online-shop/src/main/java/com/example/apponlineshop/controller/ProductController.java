@@ -37,7 +37,7 @@ public class ProductController {
         return productService.getProduct(product);
     }
 
-    @GetMapping()
+    @GetMapping("/list")
     @ResponseBody
     public List<ResProduct> getList(){
         return productService.getListProduct();

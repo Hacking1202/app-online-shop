@@ -1,4 +1,4 @@
-package com.example.apponlineshop.repository;
+package com.example.apponlineshop.projection;
 
 import com.example.apponlineshop.entity.Detail;
 import org.springframework.data.rest.core.config.Projection;
