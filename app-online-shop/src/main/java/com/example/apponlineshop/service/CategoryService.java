@@ -71,4 +71,8 @@ public class CategoryService {
             categoryRepository.deleteById(id);
             return new ApiResponse("Successfully deleted category", true);
     }
+
+    public List<Category> getCategory(String name) {
+        return categoryRepository.findByNameEquals(name);
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.apponlineshop.bot;
 
+import com.example.apponlineshop.entity.Category;
 import com.example.apponlineshop.payload.DtoUser;
 import com.example.apponlineshop.payload.ResCategory;
 import com.example.apponlineshop.repository.UserRepository;
@@ -29,6 +30,7 @@ public class BotSettings extends TelegramLongPollingBot {
     Map<Long, String> phoneNumber = new HashMap<>();
     Map<Long, String> username = new HashMap<>();
     List<String> categoryNameList = new ArrayList<>();
+    List<String> categoryOneNameList = new ArrayList<>();
 
 
     final UserService userService;
@@ -53,7 +55,7 @@ public class BotSettings extends TelegramLongPollingBot {
                 sendMessage.setChatId(chatId.toString());
                 if (text.equals("/start")) {
                     if (userService.isRegister(chatId)) {
-                        sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                        sendMessage.setReplyMarkup(getInlineButton(getCourseOne()));
                         sendMSG(sendMessage, "category tan", message);
                     } else {
                         sendMessage.setReplyMarkup(getInlineButton(Template.START_BUTTON));
@@ -74,7 +76,7 @@ public class BotSettings extends TelegramLongPollingBot {
                             DtoUser dtoUser = new DtoUser(chatId, username.get(chatId), phoneNumber.get(chatId), text);
                             userService.saveUser(dtoUser);
                             isTan.remove(chatId);
-                            sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                            sendMessage.setReplyMarkup(getInlineButton(getCourseOne()));
                             sendMSG(sendMessage, "siz muaffaqiyatle ruyxatdan utdingiz category tanlang", message);
                             break;
                         case "LoginUsername":
@@ -87,14 +89,13 @@ public class BotSettings extends TelegramLongPollingBot {
                             break;
                         case "LoginPassword":
                             if (userService.isLoginPassword(text)) {
-                                sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                                sendMessage.setReplyMarkup(getInlineButton(getCourseOne()));
                                 sendMSG(sendMessage, "category tan", message);
                             } else {
                                 sendMSG(sendMessage, "password notugri!", message);
                             }
                             break;
                     }
-
                 }
             } else if (message.hasContact()) {
                 if (isTan.get(chatId).equals("phoneNumber")) {
@@ -106,6 +107,12 @@ public class BotSettings extends TelegramLongPollingBot {
         } else if (update.hasCallbackQuery()) {
             String data = update.getCallbackQuery().getData();
             Long id = update.getCallbackQuery().getFrom().getId();
+            for (String category : getCourseOne()) {
+                if (data.equals(category)) {
+                    sendMessage.setReplyMarkup(getInlineButton(getCategory(data)));
+                    sendMSG(sendMessage, "maxsulotni tanlang", update.getCallbackQuery().getMessage());
+                }
+            }
             if (data.equals("Register")) {
                 buttonPhoneNumber(sendMessage, update.getCallbackQuery().getMessage());
                 isTan.put(id, "phoneNumber");
@@ -173,11 +180,20 @@ public class BotSettings extends TelegramLongPollingBot {
         return rows;
     }
 
-    public List<String> getCategory() {
-        for (ResCategory resCategory : categoryService.getListCategory()) {
-            categoryNameList.add(resCategory.getName());
+    public List<String> getCategory(String name) {
+        for (Category category : categoryService.getCategory(name)) {
+            categoryNameList.add(category.getName());
         }
         return categoryNameList;
+    }
+
+    public List<String> getCourseOne() {
+        for (ResCategory resCategory : categoryService.getListCategory()) {
+            if (resCategory.getCategoryId() == null) {
+                categoryOneNameList.add(resCategory.getName());
+            }
+        }
+        return categoryOneNameList;
     }
 
     public InlineKeyboardMarkup getInlineButton(List<String> list) {
