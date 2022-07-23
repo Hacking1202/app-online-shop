@@ -60,39 +60,41 @@ public class BotSettings extends TelegramLongPollingBot {
                         sendMSG(sendMessage, "Assalomu alaykum " + message.getFrom().getFirstName() + " botimizga hush kelipsiz bulimni tanlang", message);
                     }
                 }
-
-                switch (isTan.get(chatId)) {
-                    case "phoneNumber":
-                        sendMSG(sendMessage, "phone numberni pastdagi tugmani bosinsh orqali kiriting ", message);
-                        break;
-                    case "username":
-                        username.put(chatId, text);
-                        isTan.put(chatId, "password");
-                        sendMSG(sendMessage, "password kiriting", message);
-                        break;
-                    case "password":
-                        DtoUser dtoUser = new DtoUser(chatId, username.get(chatId), phoneNumber.get(chatId), text);
-                        userService.saveUser(dtoUser);
-                        isTan.remove(chatId);
-                        sendMessage.setReplyMarkup(getInlineButton(getCategory()));
-                        sendMSG(sendMessage, "siz muaffaqiyatle ruyxatdan utdingiz category tanlang", message);
-                        break;
-                    case "LoginUsername":
-                        if (userService.isLoginUsername(text)) {
-                            sendMSG(sendMessage, "passwordingizni kiriting", message);
-                            isTan.put(chatId, "LoginPassword");
-                        } else {
-                            sendMSG(sendMessage, "username topilmadi!", message);
-                        }
-                        break;
-                    case "LoginPassword":
-                        if (userService.isLoginPassword(text)) {
+                if (isTan.get(chatId) != null) {
+                    switch (isTan.get(chatId)) {
+                        case "phoneNumber":
+                            sendMSG(sendMessage, "phone numberni pastdagi tugmani bosinsh orqali kiriting ", message);
+                            break;
+                        case "username":
+                            username.put(chatId, text);
+                            isTan.put(chatId, "password");
+                            sendMSG(sendMessage, "password kiriting", message);
+                            break;
+                        case "password":
+                            DtoUser dtoUser = new DtoUser(chatId, username.get(chatId), phoneNumber.get(chatId), text);
+                            userService.saveUser(dtoUser);
+                            isTan.remove(chatId);
                             sendMessage.setReplyMarkup(getInlineButton(getCategory()));
-                            sendMSG(sendMessage, "category tan", message);
-                        } else {
-                            sendMSG(sendMessage, "password notugri!",message);
-                        }
-                        break;
+                            sendMSG(sendMessage, "siz muaffaqiyatle ruyxatdan utdingiz category tanlang", message);
+                            break;
+                        case "LoginUsername":
+                            if (userService.isLoginUsername(text)) {
+                                sendMSG(sendMessage, "passwordingizni kiriting", message);
+                                isTan.put(chatId, "LoginPassword");
+                            } else {
+                                sendMSG(sendMessage, "username topilmadi!", message);
+                            }
+                            break;
+                        case "LoginPassword":
+                            if (userService.isLoginPassword(text)) {
+                                sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                                sendMSG(sendMessage, "category tan", message);
+                            } else {
+                                sendMSG(sendMessage, "password notugri!", message);
+                            }
+                            break;
+                    }
+
                 }
             } else if (message.hasContact()) {
                 if (isTan.get(chatId).equals("phoneNumber")) {
