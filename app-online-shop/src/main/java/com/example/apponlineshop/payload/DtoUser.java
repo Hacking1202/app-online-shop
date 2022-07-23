@@ -17,4 +17,11 @@ public class DtoUser {
     private String username;
     private String phoneNumber;
     private String password;
+
+    public DtoUser(Long chatId, String username, String phoneNumber, String password) {
+        this.chatId = chatId;
+        this.username = username;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+    }
 }

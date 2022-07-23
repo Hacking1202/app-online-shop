@@ -15,6 +15,7 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
     public void addOrEdit(DtoUser dtoUser, User user) {
         user.setChatId(dtoUser.getChatId());
         user.setUsername(dtoUser.getUsername());
@@ -22,6 +23,7 @@ public class UserService {
         user.setPhoneNumber(dtoUser.getPhoneNumber());
         userRepository.save(user);
     }
+
     public ApiResponse saveUser(DtoUser dtoUser) {
         User user = new User();
         addOrEdit(dtoUser, user);
@@ -39,9 +41,32 @@ public class UserService {
         return new ApiResponse("Error", false);
     }
 
-
     public ApiResponse deleteUser(UUID id) {
         userRepository.deleteById(id);
         return new ApiResponse("Deleted User", true);
+    }
+
+    public boolean isRegister(Long chatId) {
+        try {
+            return userRepository.existsByChatIdEquals(chatId);
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isLoginUsername(String username) {
+        try {
+            return userRepository.existsByUsernameEquals(username);
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isLoginPassword(String password) {
+        try {
+            return userRepository.existsByPasswordEquals(password);
+        }catch (Exception e) {
+            return false;
+        }
     }
 }
