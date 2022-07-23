@@ -1,10 +1,13 @@
 package com.example.apponlineshop.bot;
 
+import com.example.apponlineshop.payload.DtoUser;
+import com.example.apponlineshop.payload.ResCategory;
+import com.example.apponlineshop.repository.UserRepository;
+import com.example.apponlineshop.service.CategoryService;
 import com.example.apponlineshop.service.UserService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -23,44 +26,90 @@ public class BotSettings extends TelegramLongPollingBot {
     private static final InlineButton IB = new InlineButton();
     private final Map<Long, String> isTan = new HashMap<>();
 
-    final UserService userService;
+    Map<Long, String> phoneNumber = new HashMap<>();
+    Map<Long, String> username = new HashMap<>();
+    List<String> categoryNameList = new ArrayList<>();
 
-    public BotSettings(UserService userService) {
+
+    final UserService userService;
+    final UserRepository userRepository;
+    final CategoryService categoryService;
+
+    public BotSettings(UserService userService, UserRepository userRepository, CategoryService categoryService) {
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.categoryService = categoryService;
     }
+
 
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage = new SendMessage();
-        SendPhoto sendPhoto = new SendPhoto();
         if (update.hasMessage()) {
             Message message = update.getMessage();
+            Long chatId = message.getChatId();
             if (message.hasText()) {
                 String text = message.getText();
-                Long chatId = message.getChatId();
                 sendMessage.setChatId(chatId.toString());
                 if (text.equals("/start")) {
                     if (userService.isRegister(chatId)) {
-                        //TODO category list
+                        sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                        sendMSG(sendMessage, "category tan", message);
                     } else {
-                        sendMessage.setReplyMarkup(new InlineKeyboardMarkup(getInlineButtonRows(Template.START_BUTTON)));
-                        sendMSG(sendMessage, text, chatId.toString());
+                        sendMessage.setReplyMarkup(getInlineButton(Template.START_BUTTON));
+                        sendMSG(sendMessage, "Assalomu alaykum " + message.getFrom().getFirstName() + " botimizga hush kelipsiz bulimni tanlang", message);
                     }
                 }
 
+                switch (isTan.get(chatId)) {
+                    case "phoneNumber":
+                        sendMSG(sendMessage, "phone numberni pastdagi tugmani bosinsh orqali kiriting ", message);
+                        break;
+                    case "username":
+                        username.put(chatId, text);
+                        isTan.put(chatId, "password");
+                        sendMSG(sendMessage, "password kiriting", message);
+                        break;
+                    case "password":
+                        DtoUser dtoUser = new DtoUser(chatId, username.get(chatId), phoneNumber.get(chatId), text);
+                        userService.saveUser(dtoUser);
+                        isTan.remove(chatId);
+                        sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                        sendMSG(sendMessage, "siz muaffaqiyatle ruyxatdan utdingiz category tanlang", message);
+                        break;
+                    case "LoginUsername":
+                        if (userService.isLoginUsername(text)) {
+                            sendMSG(sendMessage, "passwordingizni kiriting", message);
+                            isTan.put(chatId, "LoginPassword");
+                        } else {
+                            sendMSG(sendMessage, "username topilmadi!", message);
+                        }
+                        break;
+                    case "LoginPassword":
+                        if (userService.isLoginPassword(text)) {
+                            sendMessage.setReplyMarkup(getInlineButton(getCategory()));
+                            sendMSG(sendMessage, "category tan", message);
+                        } else {
+                            sendMSG(sendMessage, "password notugri!",message);
+                        }
+                        break;
+                }
+            } else if (message.hasContact()) {
                 if (isTan.get(chatId).equals("phoneNumber")) {
-                    sendMSG(sendMessage, "username kiriting", chatId.toString());
+                    phoneNumber.put(chatId, message.getContact().getPhoneNumber());
                     isTan.put(chatId, "username");
-                }else if (isTan.get(chatId).equals("username")) {
-                    sendMSG(sendMessage, "password kiriting", chatId.toString());
+                    sendMSG(sendMessage, "username kiriting", message);
                 }
             }
         } else if (update.hasCallbackQuery()) {
             String data = update.getCallbackQuery().getData();
             Long id = update.getCallbackQuery().getFrom().getId();
             if (data.equals("Register")) {
-                buttonPhoneNumber(sendMessage, id.toString());
+                buttonPhoneNumber(sendMessage, update.getCallbackQuery().getMessage());
                 isTan.put(id, "phoneNumber");
+            } else if (data.equals("Login")) {
+                sendMSG(sendMessage, "usenamengizni kiriting", update.getCallbackQuery().getMessage());
+                isTan.put(id, "LoginUsername");
             }
         }
     }
@@ -77,9 +126,9 @@ public class BotSettings extends TelegramLongPollingBot {
         }
     }
 
-    public void buttonPhoneNumber(SendMessage message, String chatId) {
+    public void buttonPhoneNumber(SendMessage sendMessage, Message message) {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        message.setReplyMarkup(replyKeyboardMarkup);
+        sendMessage.setReplyMarkup(replyKeyboardMarkup);
 //        replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(true);
@@ -91,12 +140,13 @@ public class BotSettings extends TelegramLongPollingBot {
         keyboardFirstRow.add(keyboardButton);
         keyboard.add(keyboardFirstRow);
         replyKeyboardMarkup.setKeyboard(keyboard);
-        sendMSG(message, "Telefon raqamingizni faqat chiqib turgan tugma orqalli yuboring", chatId);
+        sendMSG(sendMessage, "Telefon raqamingizni faqat chiqib turgan tugma orqalli yuboring", message);
     }
 
-    public void sendMSG(SendMessage sendMessage, String text, String chatId) {
+    public void sendMSG(SendMessage sendMessage, String text, Message message) {
+        delMsg(message);
         try {
-            sendMessage.setChatId(chatId);
+            sendMessage.setChatId(message.getChatId().toString());
             sendMessage.setText(text);
             execute(sendMessage);
         } catch (TelegramApiException e) {
@@ -119,6 +169,17 @@ public class BotSettings extends TelegramLongPollingBot {
             rows.add(Collections.singletonList(IB.getInlineButton(text, text)));
         }
         return rows;
+    }
+
+    public List<String> getCategory() {
+        for (ResCategory resCategory : categoryService.getListCategory()) {
+            categoryNameList.add(resCategory.getName());
+        }
+        return categoryNameList;
+    }
+
+    public InlineKeyboardMarkup getInlineButton(List<String> list) {
+        return new InlineKeyboardMarkup(getInlineButtonRows(list));
     }
 
     @Override

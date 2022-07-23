@@ -47,6 +47,26 @@ public class UserService {
     }
 
     public boolean isRegister(Long chatId) {
-        return userRepository.existsByChatIdEquals(chatId);
+        try {
+            return userRepository.existsByChatIdEquals(chatId);
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isLoginUsername(String username) {
+        try {
+            return userRepository.existsByUsernameEquals(username);
+        }catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isLoginPassword(String password) {
+        try {
+            return userRepository.existsByPasswordEquals(password);
+        }catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -7,4 +7,8 @@ import java.util.UUID;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByChatIdEquals(Long chatId);
+
+    boolean existsByUsernameEquals(String username);
+
+    boolean existsByPasswordEquals(String password);
 }
