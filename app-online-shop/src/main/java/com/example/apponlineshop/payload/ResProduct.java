@@ -18,6 +18,7 @@ public class ResProduct {
     private String maker;
     private String expireAmount;
     private String timeMode;
+    private String measure;
     private String percentProfit;
     private String detail;
 }
