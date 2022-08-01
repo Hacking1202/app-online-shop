@@ -17,7 +17,7 @@ public class ReqProduct {
     private Integer maker_id;
     private String expireAmount;
     private String timeMode;
-    private String percentProfit;
+    private Double percentProfit;
     private Integer detail_id;
 
 }
