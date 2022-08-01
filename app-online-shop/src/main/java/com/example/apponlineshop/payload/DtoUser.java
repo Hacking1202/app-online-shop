@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DtoUser {
+public class  DtoUser {
     private UUID id;
     private Long chatId;
     private String username;

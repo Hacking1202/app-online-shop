@@ -4,21 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReqProduct {
+@Getter
+@Setter
+public class DtoMaker {
+    private UUID id;
     private String name;
-    private UUID category_id;
-    private Integer maker_id;
-    private String expireAmount;
-    private String timeMode;
-    private String percentProfit;
-    private Integer detail_id;
-
 }
-

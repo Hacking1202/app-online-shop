@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
 @NoArgsConstructor
@@ -22,4 +23,6 @@ public class Category extends AbsEntity {
     private String name;
     @ManyToOne
     private Category category;
+    @OneToOne
+    private Attachment photo;
 }

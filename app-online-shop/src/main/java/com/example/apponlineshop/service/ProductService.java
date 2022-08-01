@@ -1,20 +1,21 @@
 package com.example.apponlineshop.service;
+
 import com.example.apponlineshop.entity.Product;
 import com.example.apponlineshop.payload.ApiResponse;
 import com.example.apponlineshop.payload.ReqProduct;
 import com.example.apponlineshop.payload.ResProduct;
-import com.example.apponlineshop.repository.CategoryRepository;
-import com.example.apponlineshop.repository.MakerRepository;
-import com.example.apponlineshop.repository.MeasurerRepository;
-import com.example.apponlineshop.repository.ProductRepository;
+import com.example.apponlineshop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+@CrossOrigin
 
 @Service
 public class ProductService {
@@ -26,17 +27,27 @@ public class ProductService {
     MakerRepository makerRepository;
     @Autowired
     MeasurerRepository measureRepository;
-    public ApiResponse saveProduct(ReqProduct reqProduct) {
-        Product product = new Product();
+    @Autowired
+    DetailRepository detailRepository;
+
+    public void shortCode(ReqProduct reqProduct, Product product) {
         product.setName(reqProduct.getName());
         product.setCategory(categoryRepository.findById(reqProduct.getCategory_id()).orElseThrow(() -> new ResourceNotFoundException("getCategory")));
         product.setMaker(makerRepository.findById(reqProduct.getMaker_id()).orElseThrow(() -> new ResourceNotFoundException("getMaker")));
+        product.setDetail(detailRepository.findById(reqProduct.getDetail_id()).orElseThrow(() -> new ResourceNotFoundException("getDetail")));
         product.setExpireAmount(reqProduct.getExpireAmount());
         product.setPercentProfit(reqProduct.getPercentProfit());
         product.setTimeMode(reqProduct.getTimeMode());
         productRepository.save(product);
+    }
+
+
+    public ApiResponse saveProduct(ReqProduct reqProduct) {
+        Product product = new Product();
+        shortCode(reqProduct, product);
         return new ApiResponse("Saved Product", true);
     }
+
     public ResProduct getProduct(Product product) {
         return new ResProduct(
                 product.getId(),
@@ -45,7 +56,8 @@ public class ProductService {
                 product.getMaker().getName(),
                 product.getExpireAmount(),
                 product.getTimeMode(),
-                product.getPercentProfit()
+                product.getPercentProfit(),
+                product.getDetail().getName()
         );
     }
 
@@ -59,13 +71,7 @@ public class ProductService {
 
             if (optionalProduct.isPresent()) {
                 Product product = optionalProduct.get();
-                product.setName(reqProduct.getName());
-                product.setCategory(categoryRepository.findById(reqProduct.getCategory_id()).orElseThrow(() -> new ResourceNotFoundException("getCategory")));
-                product.setMaker(makerRepository.findById(reqProduct.getMaker_id()).orElseThrow(() -> new ResourceNotFoundException("getMaker")));
-                product.setExpireAmount(reqProduct.getExpireAmount());
-                product.setTimeMode(reqProduct.getTimeMode());
-                product.setPercentProfit(reqProduct.getPercentProfit());
-                productRepository.save(product);
+                shortCode(reqProduct, product);
                 return new ApiResponse("Edited client", true);
 
             }

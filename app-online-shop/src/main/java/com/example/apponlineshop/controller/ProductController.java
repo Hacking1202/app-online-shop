@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("api/product")
-@CrossOrigin
 public class ProductController {
     @Autowired
     ProductService productService;
@@ -52,7 +52,6 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public ApiResponse deleteProduct(@PathVariable UUID id){
-
         return productService.deleteProduct(id);
     }
 

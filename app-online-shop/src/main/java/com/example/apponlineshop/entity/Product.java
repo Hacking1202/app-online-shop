@@ -24,9 +24,12 @@ public class Product extends AbsEntity {
     private String timeMode;
     @OneToOne
     private Measure measure;
-    @OneToMany
-    private List<Detail> detail;
+    @OneToOne
+    private Detail detail;
     @Column(nullable = false)
     private String percentProfit;
+    @OneToOne
+    private Attachment photo;
+
 
 }

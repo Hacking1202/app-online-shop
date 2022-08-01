@@ -8,3 +8,4 @@ public interface Template {
     String BOT_USERNAME = "@Idea_dan_bot";
     List<String> START_BUTTON = Arrays.asList("Login", "Register");
 }
+

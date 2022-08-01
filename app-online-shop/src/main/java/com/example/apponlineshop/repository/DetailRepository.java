@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @CrossOrigin
 @RepositoryRestResource(path = "detail", collectionResourceRel = "list", excerptProjection = CustomDetail.class)
-public interface DetailRepository extends JpaRepository<Detail, UUID> {
+public interface DetailRepository extends JpaRepository<Detail, Integer> {
 }
