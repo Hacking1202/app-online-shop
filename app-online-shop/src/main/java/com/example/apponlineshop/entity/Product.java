@@ -27,7 +27,7 @@ public class Product extends AbsEntity {
     @OneToOne
     private Detail detail;
     @Column(nullable = false)
-    private String percentProfit;
+    private Double percentProfit;
     @OneToOne
     private Attachment photo;
 

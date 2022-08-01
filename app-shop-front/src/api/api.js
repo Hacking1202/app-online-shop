@@ -1,5 +1,7 @@
 export const api = {
     category: '/category',
     product: '/product',
-    maker: '/maker'
+    maker: '/maker',
+    warehouse:'/warehouse',
+    timeMode:'/timeMode',
 }
