@@ -19,6 +19,7 @@ function App() {
           <Route path='/admin/' element={<Admin/>}/>
           <Route path='/admin/category' element={<Category/>}/>
           <Route path='/admin/maker' element={<Maker/>}/>
+          <Route path='/admin/product' element={<Produc/>}/>
           <Route path='*' element={<NotFound/>}/>
             <Route path='/warehouse' element={<Warehouse/>}/>
             <Route path='/timeMode' element={<TimeMode/>}/>

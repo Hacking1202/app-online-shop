@@ -5,13 +5,12 @@ import {Modal, ModalBody, ModalFooter, ModalHeader,} from "reactstrap";
 import {deleteWarehouse,  getWarehouses, saveWarehouse} from "../redux/actions/AppAction";
 import {connect} from "react-redux";
 import './css/style.css';
-import {getProduct} from "../api/AppApi";
 
 
 class Warehouse extends Component {
     componentDidMount() {
         this.props.dispatch(getWarehouses())
-        this.props.dispatch(getProduct())
+        this.props.dispatch(getP())
     }
 
     render() {
