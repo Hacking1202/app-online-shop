@@ -34,6 +34,7 @@ public class ProductService {
         product.setName(reqProduct.getName());
         product.setCategory(categoryRepository.findById(reqProduct.getCategory_id()).orElseThrow(() -> new ResourceNotFoundException("getCategory")));
         product.setMaker(makerRepository.findById(reqProduct.getMaker_id()).orElseThrow(() -> new ResourceNotFoundException("getMaker")));
+        product.setMeasure(measureRepository.findById(reqProduct.getMeasure_id()).orElseThrow(() -> new ResourceNotFoundException("getMeasure")));
         product.setDetail(detailRepository.findById(reqProduct.getDetail_id()).orElseThrow(() -> new ResourceNotFoundException("getDetail")));
         product.setExpireAmount(reqProduct.getExpireAmount());
         product.setPercentProfit(reqProduct.getPercentProfit());
@@ -56,6 +57,7 @@ public class ProductService {
                 product.getMaker().getName(),
                 product.getExpireAmount(),
                 product.getTimeMode(),
+                product.getMeasure().getName(),
                 product.getPercentProfit(),
                 product.getDetail().getName()
         );

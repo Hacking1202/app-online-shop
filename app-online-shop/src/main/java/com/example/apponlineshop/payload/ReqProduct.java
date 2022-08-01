@@ -18,6 +18,8 @@ public class ReqProduct {
     private String expireAmount;
     private String timeMode;
     private Double percentProfit;
+    private Integer measure_id;
+    private String percentProfit;
     private Integer detail_id;
 
 }
